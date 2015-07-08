@@ -656,6 +656,7 @@ var APP = (function () {
         Charts.destroy( app.data.reddit.charts.domain )
         Charts.destroy( app.data.reddit.charts.subreddits )
         Charts.destroy( app.data.reddit.charts.post_types )
+        Charts.destroy( app.data.reddit.charts.nsfw )
       }
 
       // Domains Chart
@@ -674,6 +675,13 @@ var APP = (function () {
       
       // Post Type Chart
       app.data.reddit.charts.post_types = Charts.postTypes( app.data.reddit.posts, {
+        segmentShowStroke: false,
+        animationSteps: 50,
+        animationEasing: 'easeInOutQuart'
+      })     
+
+      // NSFW
+      app.data.reddit.charts.nsfw = Charts.nsfw( app.data.reddit.posts, {
         segmentShowStroke: false,
         animationSteps: 50,
         animationEasing: 'easeInOutQuart'

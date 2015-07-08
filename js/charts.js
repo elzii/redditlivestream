@@ -51,6 +51,7 @@ var CHARTS = (function () {
         domains : $('#chart--domains'),
         subreddits : $('#chart--subreddits'),
         post_types : $('#chart--post_types'),
+        nsfw : $('#chart--nsfw'),
       }
     }
   }
@@ -190,7 +191,8 @@ var CHARTS = (function () {
     })
 
     // Render chart
-    return new Chart(ctx).Doughnut(data, options)
+    // return new Chart(ctx).Doughnut(data, options)
+    return new Chart(ctx).Pie(data, options)
   }
 
 
@@ -262,6 +264,65 @@ var CHARTS = (function () {
 
     })
     
+
+    // Render chart
+    return new Chart(ctx).Pie(data, options)
+
+  }
+
+
+  /**
+   * NSFW
+   * @param  {Array}  posts   
+   * @param  {Object} options 
+   * @return {Object} chart
+   */
+  charts.nsfw = function(posts, options) {
+
+    if ( !posts ) {
+      console.log('No array of posts provided');
+      return false;
+    }
+
+    console.log('test')
+
+    var options = options || {}
+
+    // Prep canvas
+    var ctx = this.$el.canvas.nsfw.get(0).getContext('2d'),
+        data = []
+
+    var counts = {
+          sfw: 0,
+          nsfw: 0
+        }
+
+    // Loop posts
+    $.each( posts, function (i, post) {
+
+      // Check if self 
+      if ( post.data.over_18 ) {
+        counts.nsfw++;
+      }
+      else {
+        counts.sfw++;
+      }
+
+    })
+
+    
+    data[0] = {
+     color     : colorLuminance( '#b23841', 0 ),
+     highlight : colorLuminance( '#b23841', -0.15 ),
+     label     : 'NSFW',
+     value     : counts.nsfw
+    }
+    data[1] = {
+     color     : colorLuminance( '#3f6297', 0 ),
+     highlight : colorLuminance( '#3f6297', -0.15 ),
+     label     : 'SFW',
+     value     : counts.sfw
+    }
 
     // Render chart
     return new Chart(ctx).Pie(data, options)
