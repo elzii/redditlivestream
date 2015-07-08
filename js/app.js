@@ -230,6 +230,11 @@ var APP = (function () {
         app.data.reddit.starting_post = xhrobj.data.after
         app.data.reddit.ending_post   = xhrobj.data.children[0].data.name
 
+        // Add children to global posts array
+        for ( var i=0; i < xhrobj.data.children.length; i++ ) {
+          app.data.reddit.posts.push( xhrobj.data.children[i] ) 
+        }
+
         _this.setDataLocally(app.data.reddit.json)
 
         // if ( app.config.debug ) { console.log('Last Post ID: ', xhrobj.data.children[0].data.name) }
@@ -594,6 +599,7 @@ var APP = (function () {
       if ( app.data.reddit.charts.domain ) {
         Charts.destroy( app.data.reddit.charts.domain )
         Charts.destroy( app.data.reddit.charts.subreddits )
+        Charts.destroy( app.data.reddit.charts.post_types )
       }
 
       // Domains Chart
@@ -610,9 +616,12 @@ var APP = (function () {
         animationEasing: 'easeInOutQuart'
       } )
       
-
-      // Domain Pie Chart
-      // var domain_chart = Charts.domains( app.data.reddit.domains )
+      // Post Type Chart
+      app.data.reddit.charts.post_types = Charts.postTypes( app.data.reddit.posts, {
+        segmentShowStroke: false,
+        animationSteps: 50,
+        animationEasing: 'easeInOutQuart'
+      })
 
     },
 

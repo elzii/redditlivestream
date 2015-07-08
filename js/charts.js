@@ -50,6 +50,7 @@ var CHARTS = (function () {
       canvas : {
         domains : $('#chart--domains'),
         subreddits : $('#chart--subreddits'),
+        post_types : $('#chart--post_types'),
       }
     }
   }
@@ -60,23 +61,25 @@ var CHARTS = (function () {
    */
   charts.init = function() {
     
-    // this.demos()      
+    // this.demos()  
   }
 
   charts.demos = function() {
 
-    var data = ["thecaptainbritainblog.files.wordpress.com","self.leagueoflegends","self.RPGStuck","self.Bitcoin","d3scene.com","imgur.com","self.leagueoflegends","self.worldpowers","self.heroesofthestorm","self.Needafriend","self.DebateReligion","imgur.com","self.heroesofthestorm","viooz.ac","imgur.com","self.techsupport","self.smashbros","imgur.com","i.imgur.com","steamcommunity.com","self.AskScienceFiction","self.GlobalOffensive","self.amiugly","self.cordcutters","pbs.org","dayinthelifeofanatheist.wordpress.com","self.albiononline","self.summonerschool","self.TTRStatus","youtube.com","self.personalfinance","youtube.com","self.leagueoflegends","self.Cplusplus","self.AMA","imgur.com","vimeo.com","self.MensRights","youtube.com","imgur.com","france24.com","self.leagueoflegends","imgur.com","i.imgur.com","steamcommunity.com","self.AskScienceFiction","self.GlobalOffensive","self.amiugly","self.cordcutters","pbs.org","imgur.com","self.GlobalOffensive","self.personalfinance","self.explainlikeimfive","self.DebateaCommunist","self.randomporncomments","primermagazine.com","i.imgur.com","self.explainlikeimfive","self.movies","i.imgur.com","self.thesims","i.imgur.com","self.catfishstories","self.Fireteams","france24.com","self.leagueoflegends","imgur.com","i.imgur.com","steamcommunity.com","self.AskScienceFiction","self.GlobalOffensive","self.amiugly","self.cordcutters","pbs.org"];
+    // var data = ["thecaptainbritainblog.files.wordpress.com","self.leagueoflegends","self.RPGStuck","self.Bitcoin","d3scene.com","imgur.com","self.leagueoflegends","self.worldpowers","self.heroesofthestorm","self.Needafriend","self.DebateReligion","imgur.com","self.heroesofthestorm","viooz.ac","imgur.com","self.techsupport","self.smashbros","imgur.com","i.imgur.com","steamcommunity.com","self.AskScienceFiction","self.GlobalOffensive","self.amiugly","self.cordcutters","pbs.org","dayinthelifeofanatheist.wordpress.com","self.albiononline","self.summonerschool","self.TTRStatus","youtube.com","self.personalfinance","youtube.com","self.leagueoflegends","self.Cplusplus","self.AMA","imgur.com","vimeo.com","self.MensRights","youtube.com","imgur.com","france24.com","self.leagueoflegends","imgur.com","i.imgur.com","steamcommunity.com","self.AskScienceFiction","self.GlobalOffensive","self.amiugly","self.cordcutters","pbs.org","imgur.com","self.GlobalOffensive","self.personalfinance","self.explainlikeimfive","self.DebateaCommunist","self.randomporncomments","primermagazine.com","i.imgur.com","self.explainlikeimfive","self.movies","i.imgur.com","self.thesims","i.imgur.com","self.catfishstories","self.Fireteams","france24.com","self.leagueoflegends","imgur.com","i.imgur.com","steamcommunity.com","self.AskScienceFiction","self.GlobalOffensive","self.amiugly","self.cordcutters","pbs.org"];
     
-    var chart = this.domains( data, {
-      segmentShowStroke: false,
-      animationSteps: 75,
-      animationEasing: 'easeInOutQuart'
-    })
+    // var chart = this.domains( data, {
+    //   segmentShowStroke: false,
+    //   animationSteps: 75,
+    //   animationEasing: 'easeInOutQuart'
+    // })
 
     // setTimeout(function() {
     //   charts.destroyFancy(chart)
     // }, 1000)
+  
 
+    charts.postTypes([], {})
   }
 
 
@@ -188,6 +191,81 @@ var CHARTS = (function () {
 
     // Render chart
     return new Chart(ctx).Doughnut(data, options)
+  }
+
+
+  /**
+   * Post Types
+   * @param  {Array}  posts   
+   * @param  {Object} options 
+   * @return {Object} chart
+   */
+  charts.postTypes = function(posts, options) {
+
+    if ( !posts ) {
+      console.log('No array of posts provided');
+      return false;
+    }
+
+    var options = options || {}
+
+    // Prep canvas
+    var ctx = this.$el.canvas.post_types.get(0).getContext('2d'),
+        data = []
+
+    var counts = {
+          self : 0,
+          imgur : 0,
+          youtube : 0,
+          other : 0,
+        }
+
+    // Loop posts
+    $.each( posts, function (i, post) {
+
+      // Check if self 
+      if ( post.data.is_self ) {
+        counts.self++;
+      }
+      // Check if imgur
+      else if ( post.data.url.indexOf('imgur') > -1) {
+        counts.imgur++;
+      }
+      // Check if youtube
+      else if ( post.data.url.indexOf('youtube') > -1) {
+        counts.youtube++;
+      }
+      // Other
+      else {
+        counts.other++;
+      }
+
+    })
+
+
+    var i = 0;
+
+    // Loop counts
+    $.each( counts, function (key, count) {
+      
+      // Generate a random color
+      var random_color = randomHexColor()
+
+      // Set data object in array
+      data[i] = {
+       color     : colorLuminance( random_color, -0.25 ),
+       highlight : colorLuminance( random_color, -0.15 ),
+       label     : key,
+       value     : count
+      }
+      i++;
+
+    })
+    
+
+    // Render chart
+    return new Chart(ctx).Pie(data, options)
+
   }
 
 
