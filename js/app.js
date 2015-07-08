@@ -23,6 +23,17 @@ var APP = (function () {
 
     $el : {
 
+      modals : {
+        exports : {
+          posts : $('#modal--export-posts'),
+        }
+      },
+
+      timestamps : {
+        start : $('#time--start'),
+        end : $('#time--end'),
+      }
+
     }
 
   }
@@ -61,6 +72,9 @@ var APP = (function () {
     supports : {}
   };
 
+  // Constants
+  var _DATA   = app.data,
+      _REDDIT = app.reddit;
 
   /**
    * App Init
@@ -97,9 +111,51 @@ var APP = (function () {
   app.events = {
 
     init : function() {
-
-      
+      this.modals()
     },
+
+    modals: function() {
+
+      // All Modals
+      $(document).on('click', '*[data-toggle-modal]', function (event) {
+        event.preventDefault()
+
+        var $this   = $(this),
+            modalID = $this.data('modal-id');
+
+        $(modalID).modal('show')
+      })
+
+      // Bind ESC to close modal
+      $(document).on('keyup', function (event) {
+        event.preventDefault()
+        if ( event.which === 27 ) {
+          $('.modal.in').modal('hide')
+        }
+      })
+      
+      // Data Export
+      $(document).on('click', '*[data-export]', function (event) {
+
+        var $this = $(this),
+            key   = $this.data('export')
+            input = $this.data('export-input-id')
+
+        // Stop stream
+        app.reddit.$el.stop.click()
+
+        // Set start/stop time
+        app.$el.timestamps.start.html( _DATA.reddit.time_start )
+        app.$el.timestamps.end.html( _DATA.reddit.time_end )
+
+        // Get data obj from key
+        var data  = app.data.reddit[key]
+
+        // Set HTML to input
+        $(input).html( JSON.stringify(data) )
+
+      })
+    }
 
 
   }

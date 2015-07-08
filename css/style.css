@@ -446,6 +446,15 @@ body {
   }
 
 
+.modal {
+  max-height: 680px;
+}
+
+.modal pre {
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
 
 
 /**
